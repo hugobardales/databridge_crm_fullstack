@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: databridge-postgres
+    container_name: databridge-postgres-container
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -17,5 +17,41 @@ services:
       timeout: 5s
       retries: 5
 
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: databridge-rabbitmq
+    ports:
+      - "5673:5672" # AMQP
+      - "15673:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio
+    container_name: databridge-minio
+    ports:
+      - "9002:9000" # API
+      - "9003:9001" # Console PC
+    environment:
+      MINIO_ROOT_USER: user
+      MINIO_ROOT_PASSWORD: password
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
+  rabbit_data:
   postgres_data:
+  minio_data:
+
