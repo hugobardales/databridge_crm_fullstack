@@ -55,14 +55,14 @@ public class User {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
+        User user = (User) o; // convert generic object "o" to object user
+        return Objects.equals(id, user.id); // Then compare the converted objet user with an id
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
+    } //  O(1) - HashMap
 
     @Override
     public String toString() {
