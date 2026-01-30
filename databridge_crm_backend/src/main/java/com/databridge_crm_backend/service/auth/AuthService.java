@@ -45,11 +45,12 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    // Method that handle login
     public AuthResponse login(LoginRequest loginRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.email(),
-                        loginRequest.password()));
+                        loginRequest.password())); // Authentication
 
         User user = userRepository.findByEmail(loginRequest.email())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
